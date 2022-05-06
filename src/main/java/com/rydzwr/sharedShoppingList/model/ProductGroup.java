@@ -19,8 +19,8 @@ public class ProductGroup
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
     private List<Product> products;
 
-    @Embedded
-    Audit audit = new Audit();
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "usersGroup")
+    private User user;
 
     public ProductGroup() {}
 
@@ -62,5 +62,15 @@ public class ProductGroup
     public void setProducts(List<Product> products)
     {
         this.products = products;
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
     }
 }

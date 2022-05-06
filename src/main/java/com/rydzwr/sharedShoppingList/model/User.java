@@ -15,8 +15,13 @@ public class User
     @NotBlank(message = "Product's name can not be empty!")
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "addedBy")
-    private Product product;
+    @OneToOne
+    @JoinColumn(name = "group_id")
+    private ProductGroup usersGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "house_id")
+    private House house;
 
     public User() {}
 
@@ -38,5 +43,25 @@ public class User
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public ProductGroup getUsersGroup()
+    {
+        return usersGroup;
+    }
+
+    public void setUsersGroup(ProductGroup usersGroup)
+    {
+        this.usersGroup = usersGroup;
+    }
+
+    public House getHouse()
+    {
+        return house;
+    }
+
+    public void setHouse(House house)
+    {
+        this.house = house;
     }
 }

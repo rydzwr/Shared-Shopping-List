@@ -1,4 +1,6 @@
-package com.rydzwr.sharedShoppingList.model;
+package com.rydzwr.sharedShoppingList.repository;
+
+import com.rydzwr.sharedShoppingList.model.Product;
 
 import java.util.List;
 import java.util.Optional;

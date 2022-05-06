@@ -16,10 +16,6 @@ public class Product
 
     private String description;
 
-    @OneToOne
-    @JoinColumn(name = "addedBy")
-    private User addedBy;
-
     private boolean important;
 
     private boolean bought;
@@ -63,16 +59,6 @@ public class Product
         this.description = description;
     }
 
-    public User getAddedBy()
-    {
-        return addedBy;
-    }
-
-    public void setAddedBy(User addedBy)
-    {
-        this.addedBy = addedBy;
-    }
-
     public boolean isImportant()
     {
         return important;
@@ -93,11 +79,13 @@ public class Product
         this.bought = bought;
     }
 
-    public void updateForm(Product source)
+    public ProductGroup getGroup()
     {
-        name = source.getName();
-        description = source.getDescription();
-        bought = source.isBought();
-        important = source.isImportant();
+        return group;
+    }
+
+    public void setGroup(ProductGroup group)
+    {
+        this.group = group;
     }
 }

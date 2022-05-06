@@ -49,4 +49,10 @@ public class House
     {
         this.users = users;
     }
+
+    public void updateFrom(House source)
+    {
+        password = source.getPassword();
+        users = source.getUsers();
+    }
 }

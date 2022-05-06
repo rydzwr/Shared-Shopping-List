@@ -12,9 +12,7 @@ public class ProductGroup
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String description;
-
-    private LocalDateTime createdDate;
+    private String name;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
     private List<Product> products;
@@ -34,24 +32,14 @@ public class ProductGroup
         this.id = id;
     }
 
-    public String getDescription()
+    public String getName()
     {
-        return description;
+        return name;
     }
 
-    public void setDescription(String description)
+    public void setName(String name)
     {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreatedDate()
-    {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate)
-    {
-        this.createdDate = createdDate;
+        this.name = name;
     }
 
     public List<Product> getProducts()
@@ -72,5 +60,11 @@ public class ProductGroup
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    public void updateFrom(ProductGroup source)
+    {
+        name = user.getName();
+        products = source.getProducts();
     }
 }

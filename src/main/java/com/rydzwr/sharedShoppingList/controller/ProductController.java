@@ -1,11 +1,17 @@
 package com.rydzwr.sharedShoppingList.controller;
 
+import com.rydzwr.sharedShoppingList.model.Product;
+import com.rydzwr.sharedShoppingList.repository.ProductRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class ProductController
 {
-    /*
     private final ProductRepository repository;
 
     public ProductController(ProductRepository repository)
@@ -42,7 +48,7 @@ public class ProductController
 
         repository.findById(id)
                 .ifPresent(product -> {
-                    product.updateForm(toUpdate);
+                    product.updateFrom(toUpdate);
                     repository.save(product);
                 });
 
@@ -59,7 +65,4 @@ public class ProductController
         repository.findById(id).ifPresent(task -> task.setBought(!task.isBought()));
         return ResponseEntity.noContent().build();
     }
-
-     */
-
 }

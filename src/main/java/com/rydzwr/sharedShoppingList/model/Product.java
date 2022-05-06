@@ -88,4 +88,13 @@ public class Product
     {
         this.group = group;
     }
+
+    public void updateFrom(Product source)
+    {
+        name = source.getName();
+        description = source.getDescription();
+        important = source.isImportant();
+        bought = source.isBought();
+        group = source.getGroup();
+    }
 }

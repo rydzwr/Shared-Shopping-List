@@ -64,4 +64,9 @@ public class User
     {
         this.house = house;
     }
+
+    public void updateFrom(User source)
+    {
+        name = source.getName();
+    }
 }

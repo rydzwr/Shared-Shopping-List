@@ -8,7 +8,4 @@ import org.springframework.data.repository.query.Param;
 
 public interface SqlProductRepository extends ProductRepository, JpaRepository<Product, Integer>
 {
-    @Override
-    @Query(nativeQuery = true, value = "select count(*) > 0 from products where id=:id")
-    boolean existsById(@Param("id") Integer id);
 }

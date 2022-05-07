@@ -25,6 +25,14 @@ public class User
 
     public User() {}
 
+    public User(int id, String name, ProductGroup usersGroup, House house)
+    {
+        this.id = id;
+        this.name = name;
+        this.usersGroup = usersGroup;
+        this.house = house;
+    }
+
     public int getId()
     {
         return id;

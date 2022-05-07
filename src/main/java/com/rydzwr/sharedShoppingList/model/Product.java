@@ -29,6 +29,16 @@ public class Product
 
     public Product() {}
 
+    public Product(int id, String name, String description, boolean important, boolean bought, ProductGroup group)
+    {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.important = important;
+        this.bought = bought;
+        this.group = group;
+    }
+
     public int getId()
     {
         return id;

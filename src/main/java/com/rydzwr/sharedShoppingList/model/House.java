@@ -20,6 +20,13 @@ public class House
 
     public House() {}
 
+    public House(int id, String password, List<User> users)
+    {
+        this.id = id;
+        this.password = password;
+        this.users = users;
+    }
+
     public int getId()
     {
         return id;

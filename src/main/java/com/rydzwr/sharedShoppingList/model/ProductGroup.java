@@ -22,6 +22,14 @@ public class ProductGroup
 
     public ProductGroup() {}
 
+    public ProductGroup(int id, String name, List<Product> products, User user)
+    {
+        this.id = id;
+        this.name = name;
+        this.products = products;
+        this.user = user;
+    }
+
     public int getId()
     {
         return id;

@@ -1,5 +1,6 @@
 package com.rydzwr.sharedShoppingList.adapter;
 
+import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.ProductGroup;
 import com.rydzwr.sharedShoppingList.repository.ProductGroupRepository;
 import org.springframework.data.jpa.repository.JpaRepository;

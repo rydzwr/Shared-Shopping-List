@@ -11,6 +11,8 @@ public interface UserRepository
 
     Optional<User> findById(Integer id);
 
+    Optional<User> findByUserName(String name);
+
     boolean existsById(Integer id);
 
     User save(User entity);

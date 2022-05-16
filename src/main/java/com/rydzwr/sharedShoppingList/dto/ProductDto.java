@@ -1,7 +1,5 @@
 package com.rydzwr.sharedShoppingList.dto;
 
-import com.rydzwr.sharedShoppingList.model.ProductGroup;
-
 public class ProductDto
 {
     private int id;
@@ -9,16 +7,14 @@ public class ProductDto
     private String description;
     private boolean important;
     private boolean bought;
-    private ProductGroup group;
 
-    public ProductDto(int id, String name, String description, boolean important, boolean bought, ProductGroup group)
+    public ProductDto(int id, String name, String description, boolean important, boolean bought)
     {
         this.id = id;
         this.name = name;
         this.description = description;
         this.important = important;
         this.bought = bought;
-        this.group = group;
     }
 
     public int getId()
@@ -44,10 +40,5 @@ public class ProductDto
     public boolean isBought()
     {
         return bought;
-    }
-
-    public ProductGroup getGroup()
-    {
-        return group;
     }
 }

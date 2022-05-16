@@ -7,12 +7,14 @@ import java.util.List;
 public class HouseDto
 {
     private int id;
+    private String name;
     private String password;
     private List<User> users;
 
-    public HouseDto(int id, String password, List<User> users)
+    public HouseDto(int id, String name, String password, List<User> users)
     {
         this.id = id;
+        this.name = name;
         this.password = password;
         this.users = users;
     }
@@ -20,6 +22,11 @@ public class HouseDto
     public int getId()
     {
         return id;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public String getPassword()

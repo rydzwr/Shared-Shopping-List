@@ -2,6 +2,7 @@ package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
+import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,41 +14,36 @@ import java.util.Optional;
 public class DbUserService
 {
     private final UserRepository repository;
-    private final UserMapper userMapper;
 
-    public DbUserService(UserRepository repository, UserMapper userMapper)
+    public DbUserService(UserRepository repository)
     {
         this.repository = repository;
-        this.userMapper = userMapper;
     }
 
-    public List<User> getAllUsers()
+    public String getName(int id)
     {
-        return repository.findAll();
+        return repository.findById(id).get().getName();
     }
 
-    public Optional<User> findByUserName(String username)
+    public List<Product> getAllProducts(int id)
     {
-        return repository.findByUserName(username);
+        return repository.findById(id).get().getProductsList();
     }
 
-    public User addUser(final User user)
+    public void removeAllProductsWhereBoughtIsTrue(int userId)
     {
-        return repository.save(user);
-    }
+        User user = repository.findById(userId).get();
+        List<Product> products = user.getProductsList();
 
-    public Optional<User> getUserWithId(final int id)
-    {
-        if (repository.existsById(id))
-            return repository.findById(id);
+        for (Product product : products)
+        {
+            if (product.isBought() == true)
+                products.remove(product);
+        }
 
-        else throw new IllegalArgumentException("User with given id not found!");
-    }
-
-    public void createNewUser(final UserDto userDto)
-    {
-        User user = userMapper.mapToUser(userDto);
         repository.save(user);
     }
 
+    // TO DO
+    // delete product by id
 }

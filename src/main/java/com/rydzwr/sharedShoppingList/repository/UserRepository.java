@@ -11,7 +11,7 @@ public interface UserRepository
 
     Optional<User> findById(Integer id);
 
-    Optional<User> findByUserName(String name);
+    Optional<User> findByName(String name);
 
     boolean existsById(Integer id);
 

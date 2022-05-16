@@ -12,17 +12,24 @@ public class House
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotBlank(message = "Set House name!")
+    private String name;
+
     @NotBlank(message = "Password can not be empty!")
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "house")
     private List<User> users;
 
+    @Embedded
+    Audit audit = new Audit();
+
     public House() {}
 
-    public House(int id, String password, List<User> users)
+    public House(int id, String name, String password, List<User> users)
     {
         this.id = id;
+        this.name = name;
         this.password = password;
         this.users = users;
     }
@@ -35,6 +42,16 @@ public class House
     public void setId(int id)
     {
         this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public String getPassword()

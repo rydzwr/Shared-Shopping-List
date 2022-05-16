@@ -14,8 +14,7 @@ public class ProductMapper
                 productDto.getName(),
                 productDto.getDescription(),
                 productDto.isImportant(),
-                productDto.isImportant(),
-                productDto.getGroup()
+                productDto.isImportant()
         );
     }
 
@@ -26,8 +25,7 @@ public class ProductMapper
                 product.getName(),
                 product.getDescription(),
                 product.isImportant(),
-                product.isBought(),
-                product.getGroup()
+                product.isBought()
         );
     }
 }

@@ -11,6 +11,7 @@ public class HouseMapper
     {
         return new House(
                 houseDto.getId(),
+                houseDto.getName(),
                 houseDto.getPassword(),
                 houseDto.getUsers()
         );
@@ -20,6 +21,7 @@ public class HouseMapper
     {
         return new HouseDto(
                 house.getId(),
+                house.getName(),
                 house.getPassword(),
                 house.getUsers()
         );

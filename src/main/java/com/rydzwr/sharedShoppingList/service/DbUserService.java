@@ -61,15 +61,16 @@ public class DbUserService
         repository.save(user);
     }
 
-    public void deleteProductById(int productId, int userId)
+    public void deleteProductById(int productId)
     {
-        User user = repository.findById(userId).get();
+        Product product = productRepository.findById(productId).get();
+        User user = product.getUser();
         List<Product> products = user.getProductsList();
 
-        for (Product product : products)
+        for (Product productFromList : products)
         {
-            if (product.getId() == productId)
-                products.remove(product);
+            if (productFromList.getId() == productId)
+                products.remove(productFromList);
         }
 
         repository.save(user);

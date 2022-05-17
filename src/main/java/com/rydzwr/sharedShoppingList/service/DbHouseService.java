@@ -73,18 +73,11 @@ public class DbHouseService
         repository.save(house);
     }
 
-    public void removeUser(int houseId, int userId)
+    public void removeUser(int userId)
     {
-        House house = repository.findById(houseId).get();
-
-        List<User> users = house.getUsers();
-
-        for (User user : users)
-        {
-            if (user.getId() == userId)
-                users.remove(user);
-        }
-
-        repository.save(house);
+       User user = userRepository.findById(userId).get();
+       House house = user.getHouse();
+       house.getUsers().remove(user);
+       repository.save(house);
     }
 }

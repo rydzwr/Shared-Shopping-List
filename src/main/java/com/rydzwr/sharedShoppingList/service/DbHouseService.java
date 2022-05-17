@@ -5,10 +5,12 @@ import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.HouseRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class DbHouseService
 {
     private final HouseRepository repository;

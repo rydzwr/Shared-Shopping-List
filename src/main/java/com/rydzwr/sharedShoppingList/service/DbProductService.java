@@ -4,16 +4,20 @@ import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class DbProductService
 {
     private final ProductRepository repository;
+    private final ProductMapper productMapper;
 
-    public DbProductService(ProductRepository repository)
+    public DbProductService(ProductRepository repository, ProductMapper productMapper)
     {
         this.repository = repository;
+        this.productMapper = productMapper;
     }
 
     public String getDetails(int id)
@@ -29,8 +33,25 @@ public class DbProductService
         return result;
     }
 
-    // TO DO
-    // update details
-    //setImportant
-    //setBought
+    public void updateDetails(int productId, ProductDto productDto)
+    {
+        Product product = repository.findById(productId).get();
+        Product source = productMapper.mapToProduct(productDto);
+        product.updateFrom(source);
+        repository.save(product);
+    }
+
+    public void setImportant(int productId)
+    {
+        Product product = repository.findById(productId).get();
+        product.setImportant(!product.isImportant());
+        repository.save(product);
+    }
+
+    public void setBought(int productId)
+    {
+        Product product = repository.findById(productId).get();
+        product.setBought(!product.isBought());
+        repository.save(product);
+    }
 }

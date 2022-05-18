@@ -1,18 +1,21 @@
 package com.rydzwr.sharedShoppingList.dto;
 
 import com.rydzwr.sharedShoppingList.model.House;
+import com.rydzwr.sharedShoppingList.model.Product;
+
+import java.util.List;
 
 public class UserDto
 {
     private int id;
     private String name;
-    private House house;
+    private List<Product> productsList;
 
-    public UserDto(int id, String name, House house)
+    public UserDto(int id, String name, List<Product> productsList)
     {
         this.id = id;
         this.name = name;
-        this.house = house;
+        this.productsList = productsList;
     }
 
     public int getId()
@@ -25,8 +28,8 @@ public class UserDto
         return name;
     }
 
-    public House getHouse()
+    public List<Product> getProductsList()
     {
-        return house;
+        return productsList;
     }
 }

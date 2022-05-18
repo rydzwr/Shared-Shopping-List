@@ -2,12 +2,10 @@ package com.rydzwr.sharedShoppingList.controller;
 
 import com.rydzwr.sharedShoppingList.service.DbProductService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/product")
 public class ProductController
 {
     private final DbProductService service;

@@ -1,5 +1,6 @@
 package com.rydzwr.sharedShoppingList.controller;
 
+import com.rydzwr.sharedShoppingList.dto.HouseDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/house")
 public class HouseController
 {
     private final DbHouseService service;
@@ -42,6 +44,12 @@ public class HouseController
     public ResponseEntity<String> getPassword(@PathVariable int houseId)
     {
         return ResponseEntity.ok(service.getPassword(houseId));
+    }
+
+    @PostMapping
+    public ResponseEntity<HouseDto> createHouse(@RequestBody HouseDto houseDto)
+    {
+        return ResponseEntity.ok(service.createHouse(houseDto));
     }
 
     @PostMapping(value = "/{houseId}")

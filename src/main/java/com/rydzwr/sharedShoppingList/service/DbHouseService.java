@@ -1,5 +1,7 @@
 package com.rydzwr.sharedShoppingList.service;
 
+import com.rydzwr.sharedShoppingList.dto.HouseDto;
+import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.model.House;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
@@ -15,11 +17,21 @@ public class DbHouseService
 {
     private final HouseRepository repository;
     private final UserRepository userRepository;
+    private final HouseMapper mapper;
 
-    public DbHouseService(HouseRepository repository, UserRepository userRepository)
+    public DbHouseService(HouseRepository repository, UserRepository userRepository, HouseMapper mapper)
     {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.mapper = mapper;
+    }
+
+    public HouseDto createHouse(HouseDto houseDto)
+    {
+        House house = mapper.mapToHouse(houseDto);
+        repository.save(house);
+
+        return houseDto;
     }
 
     public String getHouseName(int id)

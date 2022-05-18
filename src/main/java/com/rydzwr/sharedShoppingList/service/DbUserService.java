@@ -19,12 +19,14 @@ public class DbUserService
     private final UserRepository repository;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final UserMapper userMapper;
 
-    public DbUserService(UserRepository repository, ProductMapper productMapper, ProductRepository productRepository)
+    public DbUserService(UserRepository repository, ProductMapper productMapper, ProductRepository productRepository, UserMapper userMapper)
     {
         this.repository = repository;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
+        this.userMapper = userMapper;
     }
 
     public String getName(int id)
@@ -35,6 +37,13 @@ public class DbUserService
     public List<Product> getAllProducts(int id)
     {
         return repository.findById(id).get().getProductsList();
+    }
+
+    public UserDto createUser(UserDto userDto)
+    {
+        User user = userMapper.mapToUser(userDto);
+        repository.save(user);
+        return userDto;
     }
 
     public void addProduct(int userId, ProductDto productDto)

@@ -12,7 +12,7 @@ public class UserMapper
         return new User(
                 userDto.getId(),
                 userDto.getName(),
-                userDto.getHouse()
+                userDto.getProductsList()
         );
     }
 
@@ -21,7 +21,7 @@ public class UserMapper
         return new UserDto(
                 user.getId(),
                 user.getName(),
-                user.getHouse()
+                user.getProductsList()
         );
     }
 }

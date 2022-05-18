@@ -19,19 +19,25 @@ public class User
     @JoinColumn(name = "house_id")
     private House house;
 
+    //TO DO
+    //Add productList to dto and constructor
+    //House require to be in dto as an id, (if == 0) -> without house at the beginning
+
+    // Find out why productsList is not in DB --> probably annotations problem
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    List<Product> productsList;
+    private List<Product> productsList;
 
     @Embedded
     Audit audit = new Audit();
 
     public User() {}
 
-    public User(int id, String name, House house)
+    public User(int id, String name, List<Product> productsList)
     {
         this.id = id;
         this.name = name;
-        this.house = house;
+        this.productsList = productsList;
     }
 
     public int getId()

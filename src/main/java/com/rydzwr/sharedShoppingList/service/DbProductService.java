@@ -41,17 +41,19 @@ public class DbProductService
         repository.save(product);
     }
 
-    public void setImportant(int productId)
+    public boolean setImportant(int productId)
     {
         Product product = repository.findById(productId).get();
         product.setImportant(!product.isImportant());
         repository.save(product);
+        return product.isImportant();
     }
 
-    public void setBought(int productId)
+    public boolean setBought(int productId)
     {
         Product product = repository.findById(productId).get();
         product.setBought(!product.isBought());
         repository.save(product);
+        return product.isBought();
     }
 }

@@ -30,16 +30,14 @@ public class ProductController
     }
 
     @PatchMapping(value = "/setImportant/{productId}")
-    public ResponseEntity<String> setImportant(@PathVariable int productId)
+    public ResponseEntity<Boolean> setImportant(@PathVariable int productId)
     {
-        service.setImportant(productId);
-        return ResponseEntity.ok("Important Has Been Set");
+        return ResponseEntity.ok(service.setImportant(productId));
     }
 
     @PatchMapping(value = "/setBought/{productId}")
-    public ResponseEntity<String> setBought(@PathVariable int productId)
+    public ResponseEntity<Boolean> setBought(@PathVariable int productId)
     {
-        service.setBought(productId);
-        return ResponseEntity.ok("Bought Has Been Set");
+        return ResponseEntity.ok(service.setBought(productId));
     }
 }

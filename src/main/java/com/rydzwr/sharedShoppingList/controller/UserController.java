@@ -38,16 +38,14 @@ public class UserController
     }
 
     @PostMapping(value = "/removeAll/{userId}")
-    public ResponseEntity<Void> removeAllProductsWhereBoughtTrue(@PathVariable int userId)
+    public ResponseEntity<List<Product>> removeAllProductsWhereBoughtTrue(@PathVariable int userId)
     {
-        service.removeAllProductsWhereBoughtIsTrue(userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.removeAllProductsWhereBoughtIsTrue(userId));
     }
 
     @DeleteMapping(value = "/{productId}")
-    public ResponseEntity<Void> deleteProductById(@PathVariable int productId)
+    public ResponseEntity<List<Product>> deleteProductById(@PathVariable int productId)
     {
-        service.deleteProductById(productId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.deleteProductById(productId));
     }
 }

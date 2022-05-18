@@ -47,7 +47,7 @@ public class DbUserService
         repository.save(user);
     }
 
-    public void removeAllProductsWhereBoughtIsTrue(int userId)
+    public List<Product> removeAllProductsWhereBoughtIsTrue(int userId)
     {
         User user = repository.findById(userId).get();
         List<Product> products = user.getProductsList();
@@ -59,9 +59,11 @@ public class DbUserService
         }
 
         repository.save(user);
+
+        return products;
     }
 
-    public void deleteProductById(int productId)
+    public List<Product> deleteProductById(int productId)
     {
         Product product = productRepository.findById(productId).get();
         User user = product.getUser();
@@ -74,5 +76,7 @@ public class DbUserService
         }
 
         repository.save(user);
+
+        return products;
     }
 }

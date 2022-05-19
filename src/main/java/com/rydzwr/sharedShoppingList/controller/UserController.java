@@ -38,12 +38,10 @@ public class UserController
         return ResponseEntity.ok(service.createUser(userDto));
     }
 
-
-    @PostMapping(value = "/addProduct/{userId}")
-    public ResponseEntity<Void> addProduct(@PathVariable int userId, @RequestBody ProductDto productDto)
+    @PostMapping (value = "/addProduct/{userId}")
+    public ResponseEntity<List<ProductDto>> addProduct(@PathVariable int userId, @RequestBody ProductDto productDto)
     {
-        service.addProduct(userId, productDto);
-        return ResponseEntity.ok().build();
+       return ResponseEntity.ok(service.addProduct(userId, productDto));
     }
 
     @PostMapping(value = "/removeAll/{userId}")

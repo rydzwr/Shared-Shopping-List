@@ -8,8 +8,11 @@ import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +49,7 @@ public class DbUserService
         return userDto;
     }
 
-    public void addProduct(int userId, ProductDto productDto)
+    public List<ProductDto> addProduct(int userId, ProductDto productDto)
     {
         Product newProduct = productMapper.mapToProduct(productDto);
         productRepository.save(newProduct);
@@ -54,6 +57,16 @@ public class DbUserService
         User user = repository.findById(userId).get();
         user.getProductsList().add(newProduct);
         repository.save(user);
+
+        List<Product> products = user.getProductsList();
+        List<ProductDto> productDtos = new ArrayList<>();
+
+        for (int i = 0; i < products.size(); i++)
+        {
+            productDtos.add(productMapper.mapToProductDto(products.get(i)));
+        }
+
+        return productDtos;
     }
 
     public List<Product> removeAllProductsWhereBoughtIsTrue(int userId)

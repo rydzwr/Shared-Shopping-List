@@ -13,7 +13,6 @@ public class ProductMapper
                 productDto.getId(),
                 productDto.getName(),
                 productDto.getDescription(),
-                productDto.isImportant(),
                 productDto.isImportant()
         );
     }

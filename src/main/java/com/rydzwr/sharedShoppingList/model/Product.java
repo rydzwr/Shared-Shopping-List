@@ -28,7 +28,7 @@ public class Product
 
     public Product() {}
 
-    public Product(int id, String name, String description, boolean important, boolean productDtoImportant) {}
+    public Product(int id, String name, String description, boolean important) {}
 
     public int getId()
     {

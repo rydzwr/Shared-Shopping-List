@@ -50,7 +50,9 @@ public class UserController
         return ResponseEntity.ok(service.removeAllProductsWhereBoughtIsTrue(userId));
     }
 
-    @DeleteMapping(value = "/{productId}")
+    // Not working when user is null id DB!!
+
+    @DeleteMapping(value = "/removeById/{productId}")
     public ResponseEntity<List<Product>> deleteProductById(@PathVariable int productId)
     {
         return ResponseEntity.ok(service.deleteProductById(productId));

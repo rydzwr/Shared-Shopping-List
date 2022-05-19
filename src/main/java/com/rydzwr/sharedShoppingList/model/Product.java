@@ -2,6 +2,7 @@ package com.rydzwr.sharedShoppingList.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "products")
@@ -11,6 +12,7 @@ public class Product
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotNull
     @NotBlank(message = "Product's name can not be empty!")
     private String name;
 
@@ -28,7 +30,14 @@ public class Product
 
     public Product() {}
 
-    public Product(int id, String name, String description, boolean important) {}
+    public Product(int id, String name, String description, boolean important, boolean bought)
+    {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.important = important;
+        this.bought = bought;
+    }
 
     public int getId()
     {

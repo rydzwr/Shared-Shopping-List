@@ -9,12 +9,13 @@ public class ProductMapper
 {
     public Product mapToProduct(final ProductDto productDto)
     {
-        return new Product(
-                productDto.getId(),
-                productDto.getName(),
-                productDto.getDescription(),
-                productDto.isImportant()
-        );
+        int id = productDto.getId();
+        String name = productDto.getName();
+        String description = productDto.getDescription();
+        boolean important = productDto.isImportant();
+        boolean bought = productDto.isBought();
+
+        return new Product(id, name, description, important, bought);
     }
 
     public ProductDto mapToProductDto(final Product product)

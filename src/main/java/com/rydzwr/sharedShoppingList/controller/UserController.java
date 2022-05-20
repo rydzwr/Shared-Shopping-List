@@ -55,7 +55,7 @@ public class UserController
     // Not working when user is null id DB!!
 
     @DeleteMapping(value = "/removeById/{productId}")
-    public ResponseEntity<List<Product>> deleteProductById(@PathVariable int productId)
+    public ResponseEntity<List<ProductDto>> deleteProductById(@PathVariable int productId)
     {
         return ResponseEntity.ok(service.deleteProductById(productId));
     }

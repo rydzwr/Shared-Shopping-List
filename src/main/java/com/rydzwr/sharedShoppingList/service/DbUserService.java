@@ -95,21 +95,23 @@ public class DbUserService
             return productMapper.mapToProductDtoList(products);
         }
     }
-
-    public List<Product> deleteProductById(int productId)
+    @Transactional
+    public List<ProductDto> deleteProductById(int productId)
     {
-        Product product = productRepository.findById(productId).get();
-        User user = product.getUser();
-        List<Product> products = user.getProductsList();
+        if (!productRepository.existsById(productId))
+            throw new IllegalArgumentException("Product with given ID doesn't exists!");
 
-        for (Product productFromList : products)
+        else
         {
-            if (productFromList.getId() == productId)
-                products.remove(productFromList);
+            Product product = productRepository.findById(productId).get();
+            User user = product.getUser();
+            List<Product> products = user.getProductsList();
+
+            productRepository.deleteProductById(productId);
+
+            repository.save(user);
+
+            return productMapper.mapToProductDtoList(products);
         }
-
-        repository.save(user);
-
-        return products;
     }
 }

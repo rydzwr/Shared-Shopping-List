@@ -20,40 +20,34 @@ public class DbProductService
         this.productMapper = productMapper;
     }
 
-    public String getDetails(int id)
+    public ProductDto getDetails(int id)
     {
         Product product = repository.findById(id).get();
-
-        String result =
-                        "name: " + product.getName() +
-                        "description: " + product.getDescription() +
-                        "important: " + product.isImportant() +
-                        "bought: " + product.isBought();
-
-        return result;
+        return productMapper.mapToProductDto(product);
     }
 
-    public void updateDetails(int productId, ProductDto productDto)
+    public ProductDto updateDetails(int productId, ProductDto productDto)
     {
         Product product = repository.findById(productId).get();
         Product source = productMapper.mapToProduct(productDto);
         product.updateFrom(source);
         repository.save(product);
+        return productDto;
     }
 
-    public boolean setImportant(int productId)
+    public ProductDto setImportant(int productId)
     {
         Product product = repository.findById(productId).get();
         product.setImportant(!product.isImportant());
         repository.save(product);
-        return product.isImportant();
+        return productMapper.mapToProductDto(product);
     }
 
-    public boolean setBought(int productId)
+    public ProductDto setBought(int productId)
     {
         Product product = repository.findById(productId).get();
         product.setBought(!product.isBought());
         repository.save(product);
-        return product.isBought();
+        return productMapper.mapToProductDto(product);
     }
 }

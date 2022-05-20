@@ -52,22 +52,24 @@ public class HouseController
         return ResponseEntity.ok(service.createHouse(houseDto));
     }
 
-    @PostMapping(value = "/{houseId}")
-    public ResponseEntity<UserDto> addUser(@PathVariable int houseId, UserDto userDto)
+    @PostMapping(value = "/addUser/{houseId}")
+    public ResponseEntity<UserDto> addUser(@PathVariable int houseId, @RequestBody UserDto userDto)
     {
-        User user = userMapper.mapToUser(userDto);
-        service.addUser(houseId, user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.addUser(houseId, userDto));
     }
 
-    @PatchMapping(value = "/{houseId}")
+    @PatchMapping(value = "/clear/{houseId}")
     public ResponseEntity<Void> clearHouse(@PathVariable int houseId)
     {
         service.clearHouse(houseId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{userId}")
+    // TO DO
+
+    // FIX this:
+
+    @PatchMapping(value = "/removeUser/{userId}")
     public ResponseEntity<Void> removeUser(@PathVariable int userId)
     {
         service.removeUser(userId);

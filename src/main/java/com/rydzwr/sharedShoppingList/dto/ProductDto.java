@@ -1,5 +1,7 @@
 package com.rydzwr.sharedShoppingList.dto;
 
+import com.rydzwr.sharedShoppingList.model.User;
+
 public class ProductDto
 {
     private int id;
@@ -16,6 +18,7 @@ public class ProductDto
         this.important = important;
         this.bought = bought;
     }
+
 
     public int getId()
     {
@@ -41,4 +44,5 @@ public class ProductDto
     {
         return bought;
     }
+
 }

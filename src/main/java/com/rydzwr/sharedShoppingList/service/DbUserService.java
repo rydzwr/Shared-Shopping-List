@@ -10,6 +10,7 @@ import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.ArrayList;
@@ -37,9 +38,9 @@ public class DbUserService
         return repository.findById(id).get().getName();
     }
 
-    public List<Product> getAllProducts(int id)
+    public List<ProductDto> getAllProducts(int id)
     {
-        return repository.findById(id).get().getProductsList();
+        return productMapper.mapToProductDtoList(productRepository.findAllByUser_Id(id));
     }
 
     public UserDto createUser(UserDto userDto)
@@ -52,9 +53,11 @@ public class DbUserService
     public List<ProductDto> addProduct(int userId, ProductDto productDto)
     {
         Product newProduct = productMapper.mapToProduct(productDto);
+        User user = repository.findById(userId).get();
+
+        newProduct.setUser(user);
         productRepository.save(newProduct);
 
-        User user = repository.findById(userId).get();
         user.getProductsList().add(newProduct);
         repository.save(user);
 
@@ -69,20 +72,28 @@ public class DbUserService
         return productDtos;
     }
 
-    public List<Product> removeAllProductsWhereBoughtIsTrue(int userId)
+    @Transactional
+    public List<ProductDto> removeAllProductsWhereBoughtIsTrue(int userId)
     {
-        User user = repository.findById(userId).get();
-        List<Product> products = user.getProductsList();
-
-        for (Product product : products)
+        if (!repository.existsById(userId))
+            throw new IllegalArgumentException("User with given ID doesn't exists!");
+        else
         {
-            if (product.isBought() == true)
-                products.remove(product);
+            User user = repository.findById(userId).get();
+            List<Product> products = productRepository.findAllByUser_Id(userId);
+
+            for (Product product : products)
+            {
+                if (product.isBought())
+                {
+                    productRepository.deleteProductById(product.getId());
+                }
+            }
+
+            repository.save(user);
+
+            return productMapper.mapToProductDtoList(products);
         }
-
-        repository.save(user);
-
-        return products;
     }
 
     public List<Product> deleteProductById(int productId)

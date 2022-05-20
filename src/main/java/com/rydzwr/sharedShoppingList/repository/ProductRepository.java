@@ -11,6 +11,8 @@ public interface ProductRepository
 
     Optional<Product> findById(Integer id);
 
+    List<Product> findAllByUser_Id(int userId);
+
     boolean existsById(Integer id);
 
     Product save(Product entity);

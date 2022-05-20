@@ -27,7 +27,7 @@ public class UserController
     }
 
     @GetMapping(value = "/products/{userId}")
-    public ResponseEntity<List<Product>> getAllProducts(@PathVariable int userId)
+    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable int userId)
     {
         return ResponseEntity.ok(service.getAllProducts(userId));
     }
@@ -45,9 +45,11 @@ public class UserController
     }
 
     @PostMapping(value = "/removeAll/{userId}")
-    public ResponseEntity<List<Product>> removeAllProductsWhereBoughtTrue(@PathVariable int userId)
+    public ResponseEntity<List<ProductDto>> removeAllProductsWhereBoughtTrue(@PathVariable int userId)
     {
-        return ResponseEntity.ok(service.removeAllProductsWhereBoughtIsTrue(userId));
+        List<ProductDto> products = service.removeAllProductsWhereBoughtIsTrue(userId);
+
+        return ResponseEntity.ok(products);
     }
 
     // Not working when user is null id DB!!

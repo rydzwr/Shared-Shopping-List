@@ -16,4 +16,6 @@ public interface UserRepository
     boolean existsById(Integer id);
 
     User save(User entity);
+
+    void deleteUserById(Integer userId);
 }

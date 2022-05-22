@@ -11,8 +11,10 @@ import com.rydzwr.sharedShoppingList.repository.HouseRepository;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -100,11 +102,15 @@ public class DbHouseService
         repository.save(house);
     }
 
+    @Transactional
     public void removeUser(int userId)
     {
-       User user = userRepository.findById(userId).get();
-       House house = user.getHouse();
-       house.getUsers().remove(user);
-       repository.save(house);
+        if (!userRepository.existsById(userId))
+            throw new IllegalArgumentException("User with given ID doesn't exists");
+
+       else
+        {
+            userRepository.deleteUserById(userId);
+        }
     }
 }

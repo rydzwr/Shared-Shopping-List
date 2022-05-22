@@ -18,4 +18,6 @@ public interface UserRepository
     User save(User entity);
 
     void deleteUserById(Integer userId);
+
+    Optional<User> getUserByDeviceId(String deviceId);
 }

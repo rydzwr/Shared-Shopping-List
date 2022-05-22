@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -45,12 +44,14 @@ public class DbHouseService
 
     public String getHouseName(int id)
     {
-        return repository.findById(id).get().getName();
+        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
+        return house.getName();
     }
 
-    public List<User> getUsers(int id)
+    public List<UserDto> getUsers(int id)
     {
-        return repository.findById(id).get().getUsers();
+        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
+        return userMapper.mapToUserDtoList(house.getUsers());
     }
 
     public String getPassword(int id)
@@ -60,11 +61,15 @@ public class DbHouseService
         // 2 min validation
 
         Random random = new Random();
-        House house = repository.findById(id).get();
+        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
         String password = String.format("%04d", random.nextInt(10000));
         house.setPassword(password);
+        repository.save(house);
         return house.getPassword();
     }
+
+    // TO DO
+    // add password validation
 
     public UserDto addUser(int id, UserDto userDto)
     {
@@ -73,8 +78,8 @@ public class DbHouseService
 
         else
         {
-            User user = userRepository.findById(userDto.getId()).get();
-            House house = repository.findById(id).get();
+            User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
+            House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
             house.getUsers().add(user);
             repository.save(house);
             return userDto;
@@ -84,7 +89,7 @@ public class DbHouseService
     // Removes all bought products from all users
     public void clearHouse(int id)
     {
-        House house = repository.findById(id).get();
+        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
         List<User> users = house.getUsers();
         for (User user : users)
         {
@@ -92,7 +97,7 @@ public class DbHouseService
 
             for (int i = 0; i < products.size(); i++)
             {
-                if (products.get(i).isBought() == true)
+                if (products.get(i).isBought())
                     productRepository.deleteProductById(products.remove(i).getId());
             }
 

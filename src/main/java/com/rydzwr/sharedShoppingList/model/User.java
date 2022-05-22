@@ -2,6 +2,7 @@ package com.rydzwr.sharedShoppingList.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -12,13 +13,18 @@ public class User
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @NotBlank(message = "Product's name can not be empty!")
+    @NotBlank(message = "User's name can not be empty!")
     private String name;
+
+    @NotNull
+    @NotBlank(message = "User's device ID can not be empty!")
+    private String deviceId;
 
     @ManyToOne
     @JoinColumn(name = "house_id")
     private House house;
 
+    @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Product> productsList;
 
@@ -52,6 +58,16 @@ public class User
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public String getDeviceId()
+    {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId)
+    {
+        this.deviceId = deviceId;
     }
 
     public List<Product> getProductsList()

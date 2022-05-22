@@ -6,8 +6,6 @@ import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class DbProductService
 {
@@ -22,13 +20,13 @@ public class DbProductService
 
     public ProductDto getDetails(int id)
     {
-        Product product = repository.findById(id).get();
+        Product product = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         return productMapper.mapToProductDto(product);
     }
 
     public ProductDto updateDetails(int productId, ProductDto productDto)
     {
-        Product product = repository.findById(productId).get();
+        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         Product source = productMapper.mapToProduct(productDto);
         product.updateFrom(source);
         repository.save(product);
@@ -37,7 +35,7 @@ public class DbProductService
 
     public ProductDto setImportant(int productId)
     {
-        Product product = repository.findById(productId).get();
+        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         product.setImportant(!product.isImportant());
         repository.save(product);
         return productMapper.mapToProductDto(product);
@@ -45,7 +43,7 @@ public class DbProductService
 
     public ProductDto setBought(int productId)
     {
-        Product product = repository.findById(productId).get();
+        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         product.setBought(!product.isBought());
         repository.save(product);
         return productMapper.mapToProductDto(product);

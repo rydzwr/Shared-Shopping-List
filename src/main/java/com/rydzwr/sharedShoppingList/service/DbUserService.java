@@ -8,12 +8,13 @@ import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.annotation.RequestScope;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +34,41 @@ public class DbUserService
         this.userMapper = userMapper;
     }
 
+    public String deviceIdFromAuthHeader(String authHeader)
+    {
+        String deviceCodeBase64 = authHeader.split(" ")[1];
+        byte[] decodedBytes = Base64.getDecoder().decode(deviceCodeBase64);
+
+        String deviceId = "";
+        try
+        {
+            deviceId = new String(decodedBytes, "US-ASCII");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+
+        }
+
+        return deviceId;
+    }
+
+    public boolean authorizeDevice(String authHeader)
+    {
+        String deviceId = deviceIdFromAuthHeader(authHeader);
+        Optional<User> user = repository.getUserByDeviceId(deviceId);
+        return !user.isEmpty();
+    }
+
+    public UserDto getByDeviceId(String deviceId)
+    {
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
+        return userMapper.mapUserNameToDto(user);
+    }
+
     public String getName(int id)
     {
-        return repository.findById(id).get().getName();
+        User user = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
+        return user.getName();
     }
 
     public List<ProductDto> getAllProducts(int id)
@@ -43,17 +76,21 @@ public class DbUserService
         return productMapper.mapToProductDtoList(productRepository.findAllByUser_Id(id));
     }
 
-    public UserDto createUser(UserDto userDto)
+    public UserDto createUser(String deviceId, UserDto userDto)
     {
         User user = userMapper.mapToUser(userDto);
+        user.setDeviceId(deviceId);
         repository.save(user);
         return userDto;
     }
 
+    // TO DO
+    // Needs to return ony added prod
+
     public List<ProductDto> addProduct(int userId, ProductDto productDto)
     {
         Product newProduct = productMapper.mapToProduct(productDto);
-        User user = repository.findById(userId).get();
+        User user = repository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
 
         newProduct.setUser(user);
         productRepository.save(newProduct);
@@ -79,7 +116,7 @@ public class DbUserService
             throw new IllegalArgumentException("User with given ID doesn't exists!");
         else
         {
-            User user = repository.findById(userId).get();
+            User user = repository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
             List<Product> products = productRepository.findAllByUser_Id(userId);
 
             for (Product product : products)
@@ -103,7 +140,7 @@ public class DbUserService
 
         else
         {
-            Product product = productRepository.findById(productId).get();
+            Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
             User user = product.getUser();
             List<Product> products = user.getProductsList();
 

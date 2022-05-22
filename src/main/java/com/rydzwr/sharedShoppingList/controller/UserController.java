@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:8080")
 public class UserController
 {
     private final DbUserService service;
@@ -20,43 +21,70 @@ public class UserController
         this.service = service;
     }
 
-    @GetMapping(value = "/name/{userId}")
-    public ResponseEntity<String> getName(@PathVariable int userId)
+    @GetMapping(value = "/login")
+    public ResponseEntity<UserDto> getLogin(@RequestHeader("Authorization") String auth)
     {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        String deviceId = service.deviceIdFromAuthHeader(auth);
+        return ResponseEntity.ok(service.getByDeviceId(deviceId));
+    }
+
+    @GetMapping(value = "/name/{userId}")
+    public ResponseEntity<String> getName(@PathVariable int userId, @RequestHeader("Authorization") String auth)
+    {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
         return ResponseEntity.ok(service.getName(userId));
     }
 
     @GetMapping(value = "/products/{userId}")
-    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable int userId)
+    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable int userId, @RequestHeader("Authorization") String auth)
     {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
         return ResponseEntity.ok(service.getAllProducts(userId));
     }
 
     @PostMapping(value = "/createUser")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
-        return ResponseEntity.ok(service.createUser(userDto));
+        if (service.authorizeDevice(auth))
+            return ResponseEntity.status(409).build();
+
+        String deviceId = service.deviceIdFromAuthHeader(auth);
+        return ResponseEntity.ok(service.createUser(deviceId, userDto));
     }
 
     @PostMapping (value = "/addProduct/{userId}")
-    public ResponseEntity<List<ProductDto>> addProduct(@PathVariable int userId, @RequestBody ProductDto productDto)
+    public ResponseEntity<List<ProductDto>> addProduct(@PathVariable int userId, @RequestBody ProductDto productDto, @RequestHeader("Authorization") String auth)
     {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
        return ResponseEntity.ok(service.addProduct(userId, productDto));
     }
 
     @PostMapping(value = "/removeAll/{userId}")
-    public ResponseEntity<List<ProductDto>> removeAllProductsWhereBoughtTrue(@PathVariable int userId)
+    public ResponseEntity<List<ProductDto>> removeAllProductsWhereBoughtTrue(@PathVariable int userId, @RequestHeader("Authorization") String auth)
     {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
         List<ProductDto> products = service.removeAllProductsWhereBoughtIsTrue(userId);
 
         return ResponseEntity.ok(products);
     }
 
-    // Not working when user is null id DB!!
-
     @DeleteMapping(value = "/removeById/{productId}")
-    public ResponseEntity<List<ProductDto>> deleteProductById(@PathVariable int productId)
+    public ResponseEntity<List<ProductDto>> deleteProductById(@PathVariable int productId, @RequestHeader("Authorization") String auth)
     {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
         return ResponseEntity.ok(service.deleteProductById(productId));
     }
 }

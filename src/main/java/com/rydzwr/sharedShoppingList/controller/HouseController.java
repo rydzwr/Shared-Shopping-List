@@ -5,10 +5,12 @@ import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
+import com.rydzwr.sharedShoppingList.model.JsonDoc;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.service.DbHouseService;
 import com.rydzwr.sharedShoppingList.service.DbProductService;
 import com.rydzwr.sharedShoppingList.service.DbUserService;
+import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,31 +52,35 @@ public class HouseController
         return ResponseEntity.ok(service.getUsers(houseId));
     }
 
-    @GetMapping(value = "/getPass/{houseId}")
-    public ResponseEntity<String> getPassword(@PathVariable int houseId, @RequestHeader("Authorization") String auth)
-    {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getPassword(houseId));
-    }
-
     @PostMapping
     public ResponseEntity<HouseDto> createHouse(@RequestBody HouseDto houseDto, @RequestHeader("Authorization") String auth)
     {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
+       if (!userService.authorizeDevice(auth))
+           return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(service.createHouse(houseDto));
+        return ResponseEntity.ok(service.createHouse(houseDto, auth));
     }
 
-    @PostMapping(value = "/addUser/{houseId}")
-    public ResponseEntity<UserDto> addUser(@PathVariable int houseId, @RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
+    @PostMapping(value = "/join/{inviteCode}")
+    public ResponseEntity<Void> join(@PathVariable String inviteCode, @RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(service.addUser(houseId, userDto));
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        service.join(inviteCode, deviceId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/completeProductsList")
+    public ResponseEntity<JsonDoc> completeProductsList(@RequestHeader("Authorization") String auth)
+    {
+        if (!userService.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        return ResponseEntity.ok(service.completeProductsList(deviceId));
     }
 
     @PatchMapping(value = "/clear/{houseId}")

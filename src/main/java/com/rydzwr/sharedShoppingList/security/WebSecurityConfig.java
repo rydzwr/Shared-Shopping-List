@@ -20,7 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                 .configurationSource(corsConfigurationSource())
                 .and()
                 .csrf()
-                .disable();
+                .disable().headers().frameOptions().sameOrigin();
     }
 
     @Bean

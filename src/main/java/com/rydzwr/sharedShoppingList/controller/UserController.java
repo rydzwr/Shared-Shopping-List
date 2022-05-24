@@ -2,8 +2,9 @@ package com.rydzwr.sharedShoppingList.controller;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
-import com.rydzwr.sharedShoppingList.model.Product;
+import com.rydzwr.sharedShoppingList.model.JsonDoc;
 import com.rydzwr.sharedShoppingList.service.DbUserService;
+import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class UserController
         if (!service.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        String deviceId = service.deviceIdFromAuthHeader(auth);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         return ResponseEntity.ok(service.getByDeviceId(deviceId));
     }
 
@@ -49,24 +50,27 @@ public class UserController
         return ResponseEntity.ok(service.getAllProducts(userId));
     }
 
+    @GetMapping(value = "/getInviteCode")
+    public ResponseEntity<JsonDoc> getInviteCode(@RequestHeader("Authorization") String auth)
+    {
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        return ResponseEntity.ok(service.getInviteCode(deviceId));
+    }
+
     @PostMapping(value = "/createUser")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
         if (service.authorizeDevice(auth))
             return ResponseEntity.status(409).build();
 
-        String deviceId = service.deviceIdFromAuthHeader(auth);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         return ResponseEntity.ok(service.createUser(deviceId, userDto));
     }
 
-    @PostMapping (value = "/addProduct/{userId}")
-    public ResponseEntity<List<ProductDto>> addProduct(@PathVariable int userId, @RequestBody ProductDto productDto, @RequestHeader("Authorization") String auth)
-    {
-        if (!service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
 
-       return ResponseEntity.ok(service.addProduct(userId, productDto));
-    }
 
     @PostMapping(value = "/removeAll/{userId}")
     public ResponseEntity<List<ProductDto>> removeAllProductsWhereBoughtTrue(@PathVariable int userId, @RequestHeader("Authorization") String auth)

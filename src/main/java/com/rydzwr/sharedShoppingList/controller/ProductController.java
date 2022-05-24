@@ -3,8 +3,11 @@ package com.rydzwr.sharedShoppingList.controller;
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.service.DbProductService;
 import com.rydzwr.sharedShoppingList.service.DbUserService;
+import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -27,6 +30,17 @@ public class ProductController
             return ResponseEntity.status(401).build();
 
         return ResponseEntity.ok(service.getDetails(productId));
+    }
+
+    @PostMapping (value = "/add")
+    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto, @RequestHeader("Authorization") String auth)
+    {
+        if (!userService.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+
+        return ResponseEntity.ok(service.addProduct(deviceId, productDto));
     }
 
     @PatchMapping(value = "/updateDetails/{productId}")

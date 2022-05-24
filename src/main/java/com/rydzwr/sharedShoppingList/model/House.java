@@ -15,7 +15,6 @@ public class House
     @NotBlank(message = "Set House name!")
     private String name;
 
-    @NotBlank(message = "Password can not be empty!")
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "house")
@@ -25,6 +24,12 @@ public class House
     Audit audit = new Audit();
 
     public House() {}
+
+    public House(int id , String name)
+    {
+        this.id = id;
+        this.name = name;
+    }
 
     public House(int id, String name, String password, List<User> users)
     {

@@ -1,6 +1,7 @@
 package com.rydzwr.sharedShoppingList.repository;
 
 import com.rydzwr.sharedShoppingList.model.House;
+import com.rydzwr.sharedShoppingList.model.User;
 
 import java.util.Optional;
 
@@ -11,4 +12,8 @@ public interface HouseRepository
     boolean existsById(Integer id);
 
     House save(House entity);
+
+    House getHouseByUsersContains(User user);
+
+    House getHouseByPassword(String pass);
 }

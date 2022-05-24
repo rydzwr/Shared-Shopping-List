@@ -4,8 +4,11 @@ import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
+import com.rydzwr.sharedShoppingList.model.House;
+import com.rydzwr.sharedShoppingList.model.JsonDoc;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
+import com.rydzwr.sharedShoppingList.repository.HouseRepository;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DbUserService
@@ -24,37 +24,21 @@ public class DbUserService
     private final UserRepository repository;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final HouseRepository houseRepository;
     private final UserMapper userMapper;
 
-    public DbUserService(UserRepository repository, ProductMapper productMapper, ProductRepository productRepository, UserMapper userMapper)
+    public DbUserService(UserRepository repository, ProductMapper productMapper, ProductRepository productRepository, UserMapper userMapper, HouseRepository houseRepository)
     {
         this.repository = repository;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.userMapper = userMapper;
-    }
-
-    public String deviceIdFromAuthHeader(String authHeader)
-    {
-        String deviceCodeBase64 = authHeader.split(" ")[1];
-        byte[] decodedBytes = Base64.getDecoder().decode(deviceCodeBase64);
-
-        String deviceId = "";
-        try
-        {
-            deviceId = new String(decodedBytes, "US-ASCII");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-
-        }
-
-        return deviceId;
+        this.houseRepository = houseRepository;
     }
 
     public boolean authorizeDevice(String authHeader)
     {
-        String deviceId = deviceIdFromAuthHeader(authHeader);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(authHeader);
         Optional<User> user = repository.getUserByDeviceId(deviceId);
         return !user.isEmpty();
     }
@@ -62,7 +46,8 @@ public class DbUserService
     public UserDto getByDeviceId(String deviceId)
     {
         User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        return userMapper.mapUserNameToDto(user);
+        UserDto dto = userMapper.mapToUserDto(user);
+        return dto;
     }
 
     public String getName(int id)
@@ -84,29 +69,35 @@ public class DbUserService
         return userDto;
     }
 
-    // TO DO
-    // Needs to return ony added prod
-
-    public List<ProductDto> addProduct(int userId, ProductDto productDto)
+    public JsonDoc getInviteCode(String deviceId)
     {
-        Product newProduct = productMapper.mapToProduct(productDto);
-        User user = repository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
+        Random random = new Random();
+        String password = String.format("%04d", random.nextInt(10000));
 
-        newProduct.setUser(user);
-        productRepository.save(newProduct);
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
+        House house = user.getHouse();
 
-        user.getProductsList().add(newProduct);
-        repository.save(user);
+        if (house == null)
+            throw new IllegalArgumentException("User is not assigned to a house!");
 
-        List<Product> products = user.getProductsList();
-        List<ProductDto> productDtos = new ArrayList<>();
+        house.setPassword(password);
+        houseRepository.save(house);
 
-        for (int i = 0; i < products.size(); i++)
-        {
-            productDtos.add(productMapper.mapToProductDto(products.get(i)));
-        }
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                house.setPassword(null);
+                houseRepository.save(house);
+            }
 
-        return productDtos;
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(timerTask, 120000);
+
+        JsonDoc res = new JsonDoc();
+        res.put("inviteCode", password);
+        return res;
     }
 
     @Transactional

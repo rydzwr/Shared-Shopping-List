@@ -15,9 +15,7 @@ public class UserMapper
     public User mapToUser(final UserDto userDto)
     {
         return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getProductsList()
+                userDto.getName()
         );
     }
 
@@ -25,14 +23,7 @@ public class UserMapper
     {
         return new UserDto(
                 user.getId(),
-                user.getName(),
-                user.getProductsList()
-        );
-    }
-
-    public UserDto mapUserNameToDto(final User user)
-    {
-        return new UserDto(
+                user.getHouse() == null ? null : user.getHouse().getId(),
                 user.getName()
         );
     }

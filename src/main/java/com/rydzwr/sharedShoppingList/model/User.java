@@ -24,8 +24,8 @@ public class User
     @JoinColumn(name = "house_id")
     private House house;
 
-    @NotNull
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OrderBy("bought")
     private List<Product> productsList;
 
     @Embedded
@@ -33,11 +33,18 @@ public class User
 
     public User() {}
 
-    public User(int id, String name, List<Product> productsList)
+    public User(int id, String name, String deviceId, House house, List<Product> productsList)
     {
         this.id = id;
         this.name = name;
+        this.deviceId = deviceId;
+        this.house = house;
         this.productsList = productsList;
+    }
+
+    public User(String name)
+    {
+        this.name = name;
     }
 
     public int getId()

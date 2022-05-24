@@ -6,15 +6,13 @@ public class ProductDto
 {
     private int id;
     private String name;
-    private String description;
     private boolean important;
     private boolean bought;
 
-    public ProductDto(int id, String name, String description, boolean important, boolean bought)
+    public ProductDto(int id, String name, boolean important, boolean bought)
     {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.important = important;
         this.bought = bought;
     }
@@ -28,11 +26,6 @@ public class ProductDto
     public String getName()
     {
         return name;
-    }
-
-    public String getDescription()
-    {
-        return description;
     }
 
     public boolean isImportant()

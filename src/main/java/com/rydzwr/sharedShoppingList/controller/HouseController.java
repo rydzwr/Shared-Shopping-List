@@ -34,24 +34,6 @@ public class HouseController
         this.userService = userService;
     }
 
-    @GetMapping(value = "/getName/{houseId}")
-    public ResponseEntity<String> getHouseName(@PathVariable int houseId, @RequestHeader("Authorization") String auth)
-    {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getHouseName(houseId));
-    }
-
-    @GetMapping(value = "/getUsers/{houseId}")
-    public ResponseEntity<List<UserDto>> getAllUsersFromHouse(@PathVariable int houseId, @RequestHeader("Authorization") String auth)
-    {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getUsers(houseId));
-    }
-
     @PostMapping
     public ResponseEntity<HouseDto> createHouse(@RequestBody HouseDto houseDto, @RequestHeader("Authorization") String auth)
     {
@@ -83,23 +65,25 @@ public class HouseController
         return ResponseEntity.ok(service.completeProductsList(deviceId));
     }
 
-    @PatchMapping(value = "/clear/{houseId}")
-    public ResponseEntity<Void> clearHouse(@PathVariable int houseId, @RequestHeader("Authorization") String auth)
+    @PatchMapping(value = "/clear")
+    public ResponseEntity<Void> clearHouse(@RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        service.clearHouse(houseId);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        service.clearHouse(deviceId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/removeUser/{userId}")
-    public ResponseEntity<Void> removeUser(@PathVariable int userId, @RequestHeader("Authorization") String auth)
+    @PatchMapping(value = "/removeUser")
+    public ResponseEntity<Void> removeUser(@RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        service.removeUser(userId);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        service.removeUser(deviceId);
         return ResponseEntity.ok().build();
     }
 }

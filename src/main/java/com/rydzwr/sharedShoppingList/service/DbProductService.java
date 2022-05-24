@@ -8,6 +8,7 @@ import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +27,6 @@ public class DbProductService
         this.userRepository = userRepository;
     }
 
-    public ProductDto getDetails(int id)
-    {
-        Product product = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
-        return productMapper.mapToProductDto(product);
-    }
-
     public ProductDto addProduct(String deviceId, ProductDto productDto)
     {
         Product newProduct = productMapper.mapToProduct(productDto);
@@ -41,15 +36,6 @@ public class DbProductService
         newProduct = repository.save(newProduct);
 
         return productMapper.mapToProductDto(newProduct);
-    }
-
-    public ProductDto updateDetails(int productId, ProductDto productDto)
-    {
-        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
-        Product source = productMapper.mapToProduct(productDto);
-        product.updateFrom(source);
-        repository.save(product);
-        return productDto;
     }
 
     public ProductDto setImportant(int productId)
@@ -66,5 +52,21 @@ public class DbProductService
         product.setBought(!product.isBought());
         repository.save(product);
         return productMapper.mapToProductDto(product);
+    }
+
+    @Transactional
+    public void deleteProductById(int productId)
+    {
+        if (!repository.existsById(productId))
+            throw new IllegalArgumentException("Product with given ID doesn't exists!");
+
+        else
+        {
+            Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
+            User user = product.getUser();
+
+            repository.deleteProductById(productId);
+            userRepository.save(user);
+        }
     }
 }

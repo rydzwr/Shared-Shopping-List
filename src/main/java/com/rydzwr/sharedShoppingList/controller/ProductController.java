@@ -23,15 +23,6 @@ public class ProductController
         this.userService = userService;
     }
 
-    @GetMapping(value = "/{productId}")
-    public ResponseEntity<ProductDto> getDetails(@PathVariable int productId, @RequestHeader("Authorization") String auth)
-    {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getDetails(productId));
-    }
-
     @PostMapping (value = "/add")
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto, @RequestHeader("Authorization") String auth)
     {
@@ -41,15 +32,6 @@ public class ProductController
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
 
         return ResponseEntity.ok(service.addProduct(deviceId, productDto));
-    }
-
-    @PatchMapping(value = "/updateDetails/{productId}")
-    public ResponseEntity<ProductDto> updateDetails(@PathVariable int productId, @RequestBody ProductDto productDto, @RequestHeader("Authorization") String auth)
-    {
-        if (!userService.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.updateDetails(productId, productDto));
     }
 
     @PatchMapping(value = "/setImportant/{productId}")
@@ -68,5 +50,14 @@ public class ProductController
             return ResponseEntity.status(401).build();
 
         return ResponseEntity.ok(service.setBought(productId));
+    }
+
+    @DeleteMapping(value = "/remove/{productId}")
+    public ResponseEntity<Void> deleteProductById(@PathVariable int productId, @RequestHeader("Authorization") String auth)
+    {
+        if (!userService.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -58,23 +58,6 @@ public class DbHouseService
         return mapper.mapToHouseDto(house);
     }
 
-    public String getHouseName(int id)
-    {
-        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        return house.getName();
-    }
-
-    public List<UserDto> getUsers(int id)
-    {
-        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        return userMapper.mapToUserDtoList(house.getUsers());
-    }
-
-
-
-    // TO DO
-    // add password validation
-
     public void join(String inviteCode, String deviceId)
     {
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
@@ -108,36 +91,21 @@ public class DbHouseService
         return res;
     }
 
-    // Removes all bought products from all users
-    public void clearHouse(int id)
+   @Transactional
+    public void clearHouse(String deviceId)
     {
-        House house = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        List<User> users = house.getUsers();
-        for (User user : users)
-        {
-            List<Product> products = user.getProductsList();
-
-            for (int i = 0; i < products.size(); i++)
-            {
-                if (products.get(i).isBought())
-                    productRepository.deleteProductById(products.remove(i).getId());
-            }
-
-            userRepository.save(user);
-        }
-
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        House house = user.getHouse();
+        productRepository.deleteAllByBoughtTrueAndUser_House(house);
         repository.save(house);
     }
 
     @Transactional
-    public void removeUser(int userId)
+    public void removeUser(String deviceId)
     {
-        if (!userRepository.existsById(userId))
-            throw new IllegalArgumentException("User with given ID doesn't exists");
-
-       else
-        {
-            userRepository.deleteUserById(userId);
-        }
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        House house = user.getHouse();
+        house.getUsers().remove(user);
+        repository.save(house);
     }
 }

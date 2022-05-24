@@ -50,17 +50,6 @@ public class DbUserService
         return dto;
     }
 
-    public String getName(int id)
-    {
-        User user = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        return user.getName();
-    }
-
-    public List<ProductDto> getAllProducts(int id)
-    {
-        return productMapper.mapToProductDtoList(productRepository.findAllByUser_Id(id));
-    }
-
     public UserDto createUser(String deviceId, UserDto userDto)
     {
         User user = userMapper.mapToUser(userDto);
@@ -117,25 +106,6 @@ public class DbUserService
                     productRepository.deleteProductById(product.getId());
                 }
             }
-
-            repository.save(user);
-
-            return productMapper.mapToProductDtoList(products);
-        }
-    }
-    @Transactional
-    public List<ProductDto> deleteProductById(int productId)
-    {
-        if (!productRepository.existsById(productId))
-            throw new IllegalArgumentException("Product with given ID doesn't exists!");
-
-        else
-        {
-            Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
-            User user = product.getUser();
-            List<Product> products = user.getProductsList();
-
-            productRepository.deleteProductById(productId);
 
             repository.save(user);
 

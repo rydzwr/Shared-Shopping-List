@@ -20,4 +20,6 @@ public interface UserRepository
     void deleteUserById(Integer userId);
 
     Optional<User> getUserByDeviceId(String deviceId);
+
+    void deleteUserByDeviceId(String deviceId);
 }

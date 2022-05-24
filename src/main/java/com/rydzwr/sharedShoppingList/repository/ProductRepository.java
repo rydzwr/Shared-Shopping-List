@@ -1,5 +1,6 @@
 package com.rydzwr.sharedShoppingList.repository;
 
+import com.rydzwr.sharedShoppingList.model.House;
 import com.rydzwr.sharedShoppingList.model.Product;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface ProductRepository
 
     void deleteProductById(Integer id);
 
+    void deleteAllByBoughtTrueAndUser_House(House house);
 }

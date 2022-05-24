@@ -32,24 +32,6 @@ public class UserController
         return ResponseEntity.ok(service.getByDeviceId(deviceId));
     }
 
-    @GetMapping(value = "/name/{userId}")
-    public ResponseEntity<String> getName(@PathVariable int userId, @RequestHeader("Authorization") String auth)
-    {
-        if (!service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getName(userId));
-    }
-
-    @GetMapping(value = "/products/{userId}")
-    public ResponseEntity<List<ProductDto>> getAllProducts(@PathVariable int userId, @RequestHeader("Authorization") String auth)
-    {
-        if (!service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
-        return ResponseEntity.ok(service.getAllProducts(userId));
-    }
-
     @GetMapping(value = "/getInviteCode")
     public ResponseEntity<JsonDoc> getInviteCode(@RequestHeader("Authorization") String auth)
     {
@@ -83,12 +65,5 @@ public class UserController
         return ResponseEntity.ok(products);
     }
 
-    @DeleteMapping(value = "/removeById/{productId}")
-    public ResponseEntity<List<ProductDto>> deleteProductById(@PathVariable int productId, @RequestHeader("Authorization") String auth)
-    {
-        if (!service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(service.deleteProductById(productId));
-    }
 }

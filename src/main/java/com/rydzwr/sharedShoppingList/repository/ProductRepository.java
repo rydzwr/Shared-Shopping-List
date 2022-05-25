@@ -21,4 +21,6 @@ public interface ProductRepository
     void deleteProductById(Integer id);
 
     void deleteAllByBoughtTrueAndUser_House(House house);
+
+    void deleteAllByUser_Id(int user_id);
 }

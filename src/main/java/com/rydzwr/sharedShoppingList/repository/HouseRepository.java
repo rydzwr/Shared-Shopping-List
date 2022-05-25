@@ -16,4 +16,6 @@ public interface HouseRepository
     House getHouseByUsersContains(User user);
 
     House getHouseByPassword(String pass);
+
+    void deleteById(int id);
 }

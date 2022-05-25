@@ -34,22 +34,24 @@ public class ProductController
         return ResponseEntity.ok(service.addProduct(deviceId, productDto));
     }
 
-    @PatchMapping(value = "/setImportant/{productId}")
-    public ResponseEntity<ProductDto> setImportant(@PathVariable int productId, @RequestHeader("Authorization") String auth)
+    @PatchMapping(value = "/toggleImportant/{productId}")
+    public ResponseEntity<Void> setImportant(@PathVariable int productId, @RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(service.setImportant(productId));
+        service.toggleImportant(productId);
+        return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/setBought/{productId}")
-    public ResponseEntity<ProductDto> setBought(@PathVariable int productId, @RequestHeader("Authorization") String auth)
+    @PatchMapping(value = "/toggleBought/{productId}")
+    public ResponseEntity<Void> setBought(@PathVariable int productId, @RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        return ResponseEntity.ok(service.setBought(productId));
+        service.toggleBought(productId);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/remove/{productId}")

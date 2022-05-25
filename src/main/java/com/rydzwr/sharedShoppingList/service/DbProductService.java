@@ -2,16 +2,12 @@ package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
-import com.rydzwr.sharedShoppingList.model.JsonDoc;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
 import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class DbProductService
@@ -38,20 +34,20 @@ public class DbProductService
         return productMapper.mapToProductDto(newProduct);
     }
 
-    public ProductDto setImportant(int productId)
+    public void toggleImportant(int productId)
     {
         Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         product.setImportant(!product.isImportant());
         repository.save(product);
-        return productMapper.mapToProductDto(product);
+        productMapper.mapToProductDto(product);
     }
 
-    public ProductDto setBought(int productId)
+    public void toggleBought(int productId)
     {
         Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
         product.setBought(!product.isBought());
         repository.save(product);
-        return productMapper.mapToProductDto(product);
+        productMapper.mapToProductDto(product);
     }
 
     @Transactional

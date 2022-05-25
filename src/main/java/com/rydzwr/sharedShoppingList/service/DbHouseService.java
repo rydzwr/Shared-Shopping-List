@@ -104,8 +104,14 @@ public class DbHouseService
     public void removeUser(String deviceId)
     {
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
-        House house = user.getHouse();
-        house.getUsers().remove(user);
-        repository.save(house);
+        productRepository.deleteAllByUser_Id(user.getId());
+        if (user.getHouse().getUsers().size() == 1)
+            repository.deleteById(user.getHouse().getId());
+
+        else
+        {
+            user.setHouse(null);
+            userRepository.save(user);
+        }
     }
 }

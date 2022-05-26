@@ -7,8 +7,6 @@ import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/product")
 @CrossOrigin(origins = "http://localhost:8080")
@@ -60,6 +58,7 @@ public class ProductController
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
+        service.deleteProductById(productId);
         return ResponseEntity.ok().build();
     }
 }

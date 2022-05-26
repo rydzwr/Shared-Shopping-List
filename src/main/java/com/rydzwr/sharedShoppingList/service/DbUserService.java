@@ -14,8 +14,6 @@ import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
 
 @Service
@@ -46,8 +44,7 @@ public class DbUserService
     public UserDto getByDeviceId(String deviceId)
     {
         User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
-        UserDto dto = userMapper.mapToUserDto(user);
-        return dto;
+        return userMapper.mapToUserDto(user);
     }
 
     public UserDto createUser(String deviceId, UserDto userDto)

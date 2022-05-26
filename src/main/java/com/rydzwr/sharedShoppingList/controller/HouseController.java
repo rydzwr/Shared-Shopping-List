@@ -1,20 +1,12 @@
 package com.rydzwr.sharedShoppingList.controller;
 
 import com.rydzwr.sharedShoppingList.dto.HouseDto;
-import com.rydzwr.sharedShoppingList.dto.UserDto;
-import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
-import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
-import com.rydzwr.sharedShoppingList.mapper.UserMapper;
 import com.rydzwr.sharedShoppingList.model.JsonDoc;
-import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.service.DbHouseService;
-import com.rydzwr.sharedShoppingList.service.DbProductService;
 import com.rydzwr.sharedShoppingList.service.DbUserService;
 import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/house")
@@ -22,15 +14,11 @@ import java.util.List;
 public class HouseController
 {
     private final DbHouseService service;
-    private final HouseMapper mapper;
-    private final UserMapper userMapper;
     private final DbUserService userService;
 
-    public HouseController(DbHouseService service, HouseMapper mapper, UserMapper userMapper, DbUserService userService)
+    public HouseController(DbHouseService service, DbUserService userService)
     {
         this.service = service;
-        this.mapper = mapper;
-        this.userMapper = userMapper;
         this.userService = userService;
     }
 

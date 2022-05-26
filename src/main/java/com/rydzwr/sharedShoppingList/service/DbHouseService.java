@@ -2,13 +2,10 @@ package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.HouseDto;
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
-import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
-import com.rydzwr.sharedShoppingList.mapper.UserMapper;
 import com.rydzwr.sharedShoppingList.model.House;
 import com.rydzwr.sharedShoppingList.model.JsonDoc;
-import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.HouseRepository;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
@@ -16,9 +13,7 @@ import com.rydzwr.sharedShoppingList.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class DbHouseService
@@ -26,17 +21,15 @@ public class DbHouseService
     private final HouseRepository repository;
     private final UserRepository userRepository;
     private final HouseMapper mapper;
-    private final UserMapper userMapper;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public DbHouseService(HouseRepository repository, UserRepository userRepository, HouseMapper mapper,
-                          UserMapper userMapper, ProductRepository productRepository, ProductMapper productMapper)
+    public DbHouseService(HouseRepository repository, UserRepository userRepository, HouseMapper mapper
+            , ProductRepository productRepository, ProductMapper productMapper)
     {
         this.repository = repository;
         this.userRepository = userRepository;
         this.mapper = mapper;
-        this.userMapper = userMapper;
         this.productRepository = productRepository;
         this.productMapper = productMapper;
     }
@@ -67,7 +60,7 @@ public class DbHouseService
             throw new IllegalStateException("User is already assigned to house!");
 
         user.setHouse(house);
-        user = userRepository.save(user);
+        userRepository.save(user);
     }
 
     public JsonDoc completeProductsList(String deviceId)

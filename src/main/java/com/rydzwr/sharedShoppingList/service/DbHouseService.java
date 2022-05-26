@@ -24,8 +24,12 @@ public class DbHouseService
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public DbHouseService(HouseRepository repository, UserRepository userRepository, HouseMapper mapper
-            , ProductRepository productRepository, ProductMapper productMapper)
+    public DbHouseService(
+            HouseRepository repository,
+            UserRepository userRepository,
+            HouseMapper mapper,
+            ProductRepository productRepository,
+            ProductMapper productMapper)
     {
         this.repository = repository;
         this.userRepository = userRepository;

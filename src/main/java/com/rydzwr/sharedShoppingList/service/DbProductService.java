@@ -1,6 +1,7 @@
 package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
+import com.rydzwr.sharedShoppingList.exceptions.RequestException;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
@@ -26,11 +27,13 @@ public class DbProductService
     public ProductDto addProduct(String deviceId, ProductDto productDto)
     {
         Product newProduct = productMapper.mapToProduct(productDto);
+
+        if (newProduct.getName() == null || newProduct.getName() == "") throw new RequestException("Empty Name");
+
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
 
         newProduct.setUser(user);
         newProduct = repository.save(newProduct);
-
         return productMapper.mapToProductDto(newProduct);
     }
 

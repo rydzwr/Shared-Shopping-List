@@ -2,6 +2,8 @@ package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
+import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
+import com.rydzwr.sharedShoppingList.exceptions.UserNotAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
 import com.rydzwr.sharedShoppingList.model.House;
@@ -43,7 +45,7 @@ public class DbUserService
 
     public UserDto getByDeviceId(String deviceId)
     {
-        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("House with given id not found"));
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
         return userMapper.mapToUserDto(user);
     }
 
@@ -60,11 +62,11 @@ public class DbUserService
         Random random = new Random();
         String password = String.format("%04d", random.nextInt(10000));
 
-        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
         House house = user.getHouse();
 
         if (house == null)
-            throw new IllegalArgumentException("User is not assigned to a house!");
+            throw new UserNotAssignedToHouseException("User is not assigned to a house!");
 
         house.setPassword(password);
         houseRepository.save(house);
@@ -89,24 +91,19 @@ public class DbUserService
     @Transactional
     public List<ProductDto> removeAllProductsWhereBoughtIsTrue(int userId)
     {
-        if (!repository.existsById(userId))
-            throw new IllegalArgumentException("User with given ID doesn't exists!");
-        else
+
+        User user = repository.findById(userId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
+        List<Product> products = productRepository.findAllByUser_Id(userId);
+
+        for (Product product : products)
         {
-            User user = repository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
-            List<Product> products = productRepository.findAllByUser_Id(userId);
-
-            for (Product product : products)
+            if (product.isBought())
             {
-                if (product.isBought())
-                {
-                    productRepository.deleteProductById(product.getId());
-                }
+                productRepository.deleteProductById(product.getId());
             }
-
-            repository.save(user);
-
-            return productMapper.mapToProductDtoList(products);
         }
+        repository.save(user);
+        return productMapper.mapToProductDtoList(products);
+
     }
 }

@@ -2,6 +2,8 @@ package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.HouseDto;
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
+import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
+import com.rydzwr.sharedShoppingList.exceptions.UserNotAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.model.House;
@@ -44,10 +46,10 @@ public class DbHouseService
         house = repository.save(house);
 
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(authHeader);
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
 
         if (user.getHouse() != null)
-            throw new IllegalStateException("User already assigned to house!");
+            throw new UserNotAssignedToHouseException("User already assigned to house!");
 
         user.setHouse(house);
         userRepository.save(user);
@@ -57,7 +59,7 @@ public class DbHouseService
 
     public void join(String inviteCode, String deviceId)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
         House house = repository.getHouseByPassword(inviteCode);
 
         if (user.getHouse() != null)
@@ -69,7 +71,11 @@ public class DbHouseService
 
     public JsonDoc completeProductsList(String deviceId)
     {
-        User caller = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        User caller = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+
+        if (caller.getHouse() == null)
+            throw new UserNotAssignedToHouseException("User Is Not Assigned To House");
+
         House house = caller.getHouse();
 
         JsonDoc res = new JsonDoc();
@@ -87,11 +93,14 @@ public class DbHouseService
         res.put("productsByUser", productsByUser);
         return res;
     }
-
-   @Transactional
+    @Transactional
     public void clearHouse(String deviceId)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+
+        if (user.getHouse() == null)
+            throw new UserNotAssignedToHouseException("User Is Not Assigned To House");
+
         House house = user.getHouse();
         productRepository.deleteAllByBoughtTrueAndUser_House(house);
         repository.save(house);
@@ -100,7 +109,7 @@ public class DbHouseService
     @Transactional
     public void removeUser(String deviceId)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given device ID not found"));
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
         productRepository.deleteAllByUser_Id(user.getId());
         if (user.getHouse().getUsers().size() == 1)
             repository.deleteById(user.getHouse().getId());

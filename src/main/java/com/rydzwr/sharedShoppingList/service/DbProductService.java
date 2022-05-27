@@ -1,7 +1,8 @@
 package com.rydzwr.sharedShoppingList.service;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
-import com.rydzwr.sharedShoppingList.exceptions.RequestException;
+import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
+import com.rydzwr.sharedShoppingList.exceptions.InvalidInputException;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
@@ -28,9 +29,11 @@ public class DbProductService
     {
         Product newProduct = productMapper.mapToProduct(productDto);
 
-        if (newProduct.getName() == null || newProduct.getName() == "") throw new RequestException("Empty Name");
+        if (newProduct.getName() == null || newProduct.getName() == "")
+            throw new InvalidInputException("Product Name Can Not Be Empty");
 
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IllegalArgumentException("User with given id not found"));
+        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() ->
+                new IdNotFoundException("User with given id not found"));
 
         newProduct.setUser(user);
         newProduct = repository.save(newProduct);
@@ -39,7 +42,9 @@ public class DbProductService
 
     public void toggleImportant(int productId)
     {
-        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
+        Product product = repository.findById(productId).orElseThrow(() ->
+                new IdNotFoundException("Product with given id not found"));
+
         product.setImportant(!product.isImportant());
         repository.save(product);
         productMapper.mapToProductDto(product);
@@ -47,7 +52,9 @@ public class DbProductService
 
     public void toggleBought(int productId)
     {
-        Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
+        Product product = repository.findById(productId).orElseThrow(() ->
+                new IdNotFoundException("Product with given id not found"));
+
         product.setBought(!product.isBought());
         repository.save(product);
         productMapper.mapToProductDto(product);
@@ -56,16 +63,11 @@ public class DbProductService
     @Transactional
     public void deleteProductById(int productId)
     {
-        if (!repository.existsById(productId))
-            throw new IllegalArgumentException("Product with given ID doesn't exists!");
+        Product product = repository.findById(productId).orElseThrow(() ->
+                new IdNotFoundException("Product with given id not found"));
 
-        else
-        {
-            Product product = repository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Product with given id not found"));
-            User user = product.getUser();
-
-            repository.deleteProductById(productId);
-            userRepository.save(user);
-        }
+        User user = product.getUser();
+        repository.deleteProductById(productId);
+        userRepository.save(user);
     }
 }

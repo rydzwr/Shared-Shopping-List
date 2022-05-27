@@ -45,7 +45,7 @@ public class DbUserService
 
     public UserDto getByDeviceId(String deviceId)
     {
-        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
         return userMapper.mapToUserDto(user);
     }
 
@@ -62,7 +62,7 @@ public class DbUserService
         Random random = new Random();
         String password = String.format("%04d", random.nextInt(10000));
 
-        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
         House house = user.getHouse();
 
         if (house == null)
@@ -89,21 +89,11 @@ public class DbUserService
     }
 
     @Transactional
-    public List<ProductDto> removeAllProductsWhereBoughtIsTrue(int userId)
+    public void removeAllProductsWhereBoughtIsTrue(String deviceId)
     {
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
 
-        User user = repository.findById(userId).orElseThrow(() -> new IdNotFoundException("User with given id not found"));
-        List<Product> products = productRepository.findAllByUser_Id(userId);
-
-        for (Product product : products)
-        {
-            if (product.isBought())
-            {
-                productRepository.deleteProductById(product.getId());
-            }
-        }
+        productRepository.deleteAllByBoughtTrueAndUser_DeviceId(deviceId);
         repository.save(user);
-        return productMapper.mapToProductDtoList(products);
-
     }
 }

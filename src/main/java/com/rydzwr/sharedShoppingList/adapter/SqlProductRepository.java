@@ -10,5 +10,4 @@ import java.util.List;
 
 public interface SqlProductRepository extends ProductRepository, JpaRepository<Product, Integer>
 {
-
 }

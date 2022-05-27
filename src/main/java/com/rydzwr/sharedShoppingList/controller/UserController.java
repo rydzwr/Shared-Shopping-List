@@ -52,18 +52,14 @@ public class UserController
         return ResponseEntity.ok(service.createUser(deviceId, userDto));
     }
 
-
-
-    @PostMapping(value = "/removeAll/{userId}")
-    public ResponseEntity<List<ProductDto>> removeAllProductsWhereBoughtTrue(@PathVariable int userId, @RequestHeader("Authorization") String auth)
+    @PostMapping(value = "/removeWhereBoughtTrue/")
+    public ResponseEntity<Void> removeAllProductsWhereBoughtTrue(@RequestHeader("Authorization") String auth)
     {
         if (!service.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
-        List<ProductDto> products = service.removeAllProductsWhereBoughtIsTrue(userId);
-
-        return ResponseEntity.ok(products);
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        service.removeAllProductsWhereBoughtIsTrue(deviceId);
+        return ResponseEntity.ok().build();
     }
-
-
 }

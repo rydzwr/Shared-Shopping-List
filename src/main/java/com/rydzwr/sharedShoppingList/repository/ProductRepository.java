@@ -23,4 +23,8 @@ public interface ProductRepository
     void deleteAllByBoughtTrueAndUser_House(House house);
 
     void deleteAllByUser_Id(int user_id);
+
+    void deleteAllByBoughtTrueAndUser_Id(int userId);
+
+    void deleteAllByBoughtTrueAndUser_DeviceId(String deviceId);
 }

@@ -57,16 +57,23 @@ public class DbHouseService
         return mapper.mapToHouseDto(house);
     }
 
-    public void join(String inviteCode, String deviceId)
+    public boolean join(String inviteCode, String deviceId)
     {
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
-        House house = repository.getHouseByPassword(inviteCode);
 
-        if (user.getHouse() != null)
-            throw new IllegalStateException("User is already assigned to house!");
+        if (!repository.existsByPassword(inviteCode)) return false;
 
-        user.setHouse(house);
-        userRepository.save(user);
+        else
+        {
+            House house = repository.getHouseByPassword(inviteCode);
+
+            if (user.getHouse() != null)
+                throw new IllegalStateException("User is already assigned to house!");
+
+            user.setHouse(house);
+            userRepository.save(user);
+            return true;
+        }
     }
 
     public JsonDoc completeProductsList(String deviceId)

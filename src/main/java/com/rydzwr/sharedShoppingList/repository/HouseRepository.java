@@ -18,4 +18,6 @@ public interface HouseRepository
     House getHouseByPassword(String pass);
 
     void deleteById(int id);
+
+    boolean existsByPassword(String pass);
 }

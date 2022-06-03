@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:8080")
 public class UserController
 {
     private final DbUserService service;
@@ -46,10 +45,21 @@ public class UserController
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
         if (service.authorizeDevice(auth))
-            return ResponseEntity.status(409).build();
+            return ResponseEntity.status(401).build();
 
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         return ResponseEntity.ok(service.createUser(deviceId, userDto));
+    }
+
+    @PostMapping(value = "/updateUser")
+    public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
+    {
+        if (service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
+
+        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
+        service.updateUser(deviceId, userDto);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/removeWhereBoughtTrue/")

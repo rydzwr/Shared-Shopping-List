@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/house")
-@CrossOrigin(origins = "http://localhost:8080")
 public class HouseController
 {
     private final DbHouseService service;
@@ -32,15 +31,13 @@ public class HouseController
     }
 
     @PostMapping(value = "/join/{inviteCode}")
-    public ResponseEntity<Void> join(@PathVariable String inviteCode, @RequestHeader("Authorization") String auth)
+    public ResponseEntity<Boolean> join(@PathVariable String inviteCode, @RequestHeader("Authorization") String auth)
     {
         if (!userService.authorizeDevice(auth))
             return ResponseEntity.status(401).build();
 
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
-        service.join(inviteCode, deviceId);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.join(inviteCode, deviceId));
     }
 
     @GetMapping(value = "/completeProductsList")

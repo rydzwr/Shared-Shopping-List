@@ -57,6 +57,14 @@ public class DbUserService
         return userDto;
     }
 
+    public void updateUser(String deviceId, UserDto userDto)
+    {
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
+
+        user.updateFrom(userMapper.mapToUser(userDto));
+        repository.save(user);
+    }
+
     public JsonDoc getInviteCode(String deviceId)
     {
         Random random = new Random();

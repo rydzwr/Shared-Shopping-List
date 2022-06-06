@@ -79,6 +79,11 @@ public class House
         this.users = users;
     }
 
+    public void updateName(House source)
+    {
+        name = source.getName();
+    }
+
     public void updateFrom(House source)
     {
         password = source.getPassword();

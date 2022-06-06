@@ -39,14 +39,23 @@ public class DbUserService
     public boolean authorizeDevice(String authHeader)
     {
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(authHeader);
+
         Optional<User> user = repository.getUserByDeviceId(deviceId);
-        return !user.isEmpty();
+        return user.isPresent();
     }
 
     public UserDto getByDeviceId(String deviceId)
     {
-        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
-        return userMapper.mapToUserDto(user);
+        if (repository.existsByDeviceId(deviceId))
+        {
+            User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
+            return userMapper.mapToUserDto(user);
+        }
+        else
+        {
+            User user = new User("null", deviceId);
+            return userMapper.mapToUserDto(user);
+        }
     }
 
     public UserDto createUser(String deviceId, UserDto userDto)

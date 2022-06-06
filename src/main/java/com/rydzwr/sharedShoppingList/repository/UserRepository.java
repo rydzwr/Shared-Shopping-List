@@ -22,4 +22,6 @@ public interface UserRepository
     Optional<User> getUserByDeviceId(String deviceId);
 
     void deleteUserByDeviceId(String deviceId);
+
+    boolean existsByDeviceId(String deviceId);
 }

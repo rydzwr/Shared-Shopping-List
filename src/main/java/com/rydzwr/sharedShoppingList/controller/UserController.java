@@ -2,6 +2,7 @@ package com.rydzwr.sharedShoppingList.controller;
 
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
+import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
 import com.rydzwr.sharedShoppingList.model.JsonDoc;
 import com.rydzwr.sharedShoppingList.service.DbUserService;
 import com.rydzwr.sharedShoppingList.service.DeviceAuthorization;
@@ -24,9 +25,6 @@ public class UserController
     @GetMapping(value = "/login")
     public ResponseEntity<UserDto> getLogin(@RequestHeader("Authorization") String auth)
     {
-        if (!service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         return ResponseEntity.ok(service.getByDeviceId(deviceId));
     }
@@ -55,7 +53,7 @@ public class UserController
     public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
         if (service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
+            throw new IdNotFoundException("FUCK");
 
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         service.updateUser(deviceId, userDto);

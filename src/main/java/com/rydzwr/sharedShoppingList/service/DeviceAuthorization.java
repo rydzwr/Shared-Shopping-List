@@ -1,6 +1,8 @@
 package com.rydzwr.sharedShoppingList.service;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class DeviceAuthorization
@@ -13,14 +15,8 @@ public class DeviceAuthorization
         byte[] decodedBytes = Base64.getDecoder().decode(deviceCodeBase64);
 
         String deviceId = "";
-        try
-        {
-            deviceId = new String(decodedBytes, "US-ASCII");
-        }
-        catch (UnsupportedEncodingException e)
-        {
 
-        }
+        deviceId = new String(decodedBytes, StandardCharsets.US_ASCII);
 
         return deviceId;
     }

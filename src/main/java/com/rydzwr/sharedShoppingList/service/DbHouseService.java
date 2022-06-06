@@ -76,6 +76,14 @@ public class DbHouseService
         }
     }
 
+    public void update(String deviceId, HouseDto houseDto)
+    {
+        User user =userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+        House house = user.getHouse();
+        house.updateName(mapper.mapToHouse(houseDto));
+        repository.save(house);
+    }
+
     public JsonDoc completeProductsList(String deviceId)
     {
         User caller = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
@@ -118,13 +126,15 @@ public class DbHouseService
     {
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
         productRepository.deleteAllByUser_Id(user.getId());
-        if (user.getHouse().getUsers().size() == 1)
-            repository.deleteById(user.getHouse().getId());
 
-        else
+        List<House> houses = repository.findAll();
+        for (House house : houses)
         {
-            user.setHouse(null);
-            userRepository.save(user);
+            if (house.getUsers().size() == 0)
+                repository.deleteById(house.getId());
         }
+
+        user.setHouse(null);
+        userRepository.save(user);
     }
 }

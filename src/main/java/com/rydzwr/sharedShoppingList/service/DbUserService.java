@@ -46,6 +46,7 @@ public class DbUserService
 
     public UserDto getByDeviceId(String deviceId)
     {
+        /*
         if (repository.existsByDeviceId(deviceId))
         {
             User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
@@ -56,6 +57,11 @@ public class DbUserService
             User user = new User("null", deviceId);
             return userMapper.mapToUserDto(user);
         }
+
+
+         */
+        User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
+        return userMapper.mapToUserDto(user);
     }
 
     public UserDto createUser(String deviceId, UserDto userDto)
@@ -66,12 +72,13 @@ public class DbUserService
         return userDto;
     }
 
-    public void updateUser(String deviceId, UserDto userDto)
+    public UserDto renameUser(String deviceId, UserDto userDto)
     {
         User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
 
         user.updateFrom(userMapper.mapToUser(userDto));
-        repository.save(user);
+        user = repository.save(user);
+        return userMapper.mapToUserDto(user);
     }
 
     public JsonDoc getInviteCode(String deviceId)

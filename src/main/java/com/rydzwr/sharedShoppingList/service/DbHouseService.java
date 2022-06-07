@@ -127,12 +127,10 @@ public class DbHouseService
         User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
         productRepository.deleteAllByUser_Id(user.getId());
 
-        List<House> houses = repository.findAll();
-        for (House house : houses)
-        {
-            if (house.getUsers().size() == 0)
-                repository.deleteById(house.getId());
-        }
+        House house = user.getHouse();
+        if (house.getUsers().size() == 1) // Are we the last user in this house?
+            repository.deleteById(house.getId());
+
 
         user.setHouse(null);
         userRepository.save(user);

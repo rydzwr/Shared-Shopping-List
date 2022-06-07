@@ -17,7 +17,7 @@ public class House
 
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "house")
+    @OneToMany(mappedBy = "house")
     private List<User> users;
 
     @Embedded

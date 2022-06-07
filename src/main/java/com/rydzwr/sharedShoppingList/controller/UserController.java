@@ -42,22 +42,18 @@ public class UserController
     @PostMapping(value = "/createUser")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
-        if (service.authorizeDevice(auth))
-            return ResponseEntity.status(401).build();
-
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
         return ResponseEntity.ok(service.createUser(deviceId, userDto));
     }
 
-    @PostMapping(value = "/updateUser")
-    public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
+    @PatchMapping(value = "/renameUser")
+    public ResponseEntity<UserDto> renameUser(@RequestBody UserDto userDto, @RequestHeader("Authorization") String auth)
     {
-        if (service.authorizeDevice(auth))
-            throw new IdNotFoundException("FUCK");
+        if (!service.authorizeDevice(auth))
+            return ResponseEntity.status(401).build();
 
         String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(auth);
-        service.updateUser(deviceId, userDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(service.renameUser(deviceId, userDto));
     }
 
     @PostMapping(value = "/removeWhereBoughtTrue/")

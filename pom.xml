@@ -10,6 +10,7 @@
 	</parent>
 	<groupId>com.rydzwr</groupId>
 	<artifactId>demo</artifactId>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SharedShoppingList</name>
 	<description>Demo project for Spring Boot</description>
@@ -61,6 +62,29 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>prepare</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+								<copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="false">
+									<fileset dir="./" includes=".ebextensions/**"/>
+									<fileset dir="${project.build.directory}" includes="*.jar"/>
+								</copy>
+								<zip destfile="${project.build.directory}/${project.build.finalName}.zip" basedir="${project.build.directory}/${project.build.finalName}"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

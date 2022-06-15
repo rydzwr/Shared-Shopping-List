@@ -18,6 +18,7 @@ public class User
 
     @NotNull
     @NotBlank(message = "User's device ID can not be empty!")
+    @Column(unique = true)
     private String deviceId;
 
     @ManyToOne

@@ -3,6 +3,7 @@ package com.rydzwr.sharedShoppingList.service;
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
+import com.rydzwr.sharedShoppingList.exceptions.InvalidInputException;
 import com.rydzwr.sharedShoppingList.exceptions.UserNotAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
@@ -66,6 +67,9 @@ public class DbUserService
 
     public UserDto createUser(String deviceId, UserDto userDto)
     {
+        if (repository.existsByDeviceId(deviceId))
+            throw new InvalidInputException("User With Given Device ID Already Exists!");
+
         User user = userMapper.mapToUser(userDto);
         user.setDeviceId(deviceId);
         repository.save(user);

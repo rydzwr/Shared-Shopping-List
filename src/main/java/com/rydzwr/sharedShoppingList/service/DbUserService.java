@@ -1,15 +1,13 @@
 package com.rydzwr.sharedShoppingList.service;
 
-import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.dto.UserDto;
 import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
 import com.rydzwr.sharedShoppingList.exceptions.InvalidInputException;
-import com.rydzwr.sharedShoppingList.exceptions.UserNotAssignedToHouseException;
+import com.rydzwr.sharedShoppingList.exceptions.UserAlreadyAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
 import com.rydzwr.sharedShoppingList.mapper.UserMapper;
 import com.rydzwr.sharedShoppingList.model.House;
 import com.rydzwr.sharedShoppingList.model.JsonDoc;
-import com.rydzwr.sharedShoppingList.model.Product;
 import com.rydzwr.sharedShoppingList.model.User;
 import com.rydzwr.sharedShoppingList.repository.HouseRepository;
 import com.rydzwr.sharedShoppingList.repository.ProductRepository;
@@ -47,20 +45,6 @@ public class DbUserService
 
     public UserDto getByDeviceId(String deviceId)
     {
-        /*
-        if (repository.existsByDeviceId(deviceId))
-        {
-            User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
-            return userMapper.mapToUserDto(user);
-        }
-        else
-        {
-            User user = new User("null", deviceId);
-            return userMapper.mapToUserDto(user);
-        }
-
-
-         */
         User user = repository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given device ID not found"));
         return userMapper.mapToUserDto(user);
     }
@@ -94,7 +78,7 @@ public class DbUserService
         House house = user.getHouse();
 
         if (house == null)
-            throw new UserNotAssignedToHouseException("User is not assigned to a house!");
+            throw new UserAlreadyAssignedToHouseException("User is not assigned to a house!");
 
         house.setPassword(password);
         houseRepository.save(house);

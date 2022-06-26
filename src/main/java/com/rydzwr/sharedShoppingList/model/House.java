@@ -25,6 +25,11 @@ public class House
 
     public House() {}
 
+    public House(String name)
+    {
+        this.name = name;
+    }
+
     public House(int id , String name)
     {
         this.id = id;

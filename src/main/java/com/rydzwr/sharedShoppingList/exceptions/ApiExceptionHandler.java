@@ -41,6 +41,21 @@ public class ApiExceptionHandler
         return new ResponseEntity<>(exception, badRequest);
     }
 
+    @ExceptionHandler(value = {UserAlreadyAssignedToHouseException.class})
+    public ResponseEntity<Object> handleException(UserAlreadyAssignedToHouseException e)
+    {
+        HttpStatus badRequest = HttpStatus.NOT_FOUND;
+
+        Exception exception = new Exception(
+                e.getMessage(),
+                e,
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+
+        return new ResponseEntity<>(exception, badRequest);
+    }
+
     @ExceptionHandler(value = {UserNotAssignedToHouseException.class})
     public ResponseEntity<Object> handleException(UserNotAssignedToHouseException e)
     {

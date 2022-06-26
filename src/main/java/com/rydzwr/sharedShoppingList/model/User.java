@@ -40,6 +40,12 @@ public class User
         this.deviceId = deviceId;
     }
 
+    public User(String name, House house)
+    {
+        this.name = name;
+        this.house = house;
+    }
+
     public User(int id, String name, String deviceId, House house, List<Product> productsList)
     {
         this.id = id;

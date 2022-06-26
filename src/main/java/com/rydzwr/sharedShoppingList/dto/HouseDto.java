@@ -19,6 +19,11 @@ public class HouseDto
         this.users = users;
     }
 
+    public HouseDto(String name)
+    {
+        this.name = name;
+    }
+
     public int getId()
     {
         return id;

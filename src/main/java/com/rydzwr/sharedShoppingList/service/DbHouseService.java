@@ -3,6 +3,7 @@ package com.rydzwr.sharedShoppingList.service;
 import com.rydzwr.sharedShoppingList.dto.HouseDto;
 import com.rydzwr.sharedShoppingList.dto.ProductDto;
 import com.rydzwr.sharedShoppingList.exceptions.IdNotFoundException;
+import com.rydzwr.sharedShoppingList.exceptions.UserAlreadyAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.exceptions.UserNotAssignedToHouseException;
 import com.rydzwr.sharedShoppingList.mapper.HouseMapper;
 import com.rydzwr.sharedShoppingList.mapper.ProductMapper;
@@ -25,31 +26,33 @@ public class DbHouseService
     private final HouseMapper mapper;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final UserValidation userValidation;
 
     public DbHouseService(
             HouseRepository repository,
             UserRepository userRepository,
             HouseMapper mapper,
             ProductRepository productRepository,
-            ProductMapper productMapper)
+            ProductMapper productMapper,
+            UserValidation userValidation)
     {
         this.repository = repository;
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.userValidation = userValidation;
     }
 
     public HouseDto createHouse(HouseDto houseDto, String authHeader)
     {
+        User user = userValidation.validate(authHeader);
+
         House house = mapper.mapToHouse(houseDto);
         house = repository.save(house);
 
-        String deviceId = DeviceAuthorization.getInstance().deviceIdFromAuthHeader(authHeader);
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
-
         if (user.getHouse() != null)
-            throw new UserNotAssignedToHouseException("User already assigned to house!");
+            throw new UserAlreadyAssignedToHouseException("User already assigned to house!");
 
         user.setHouse(house);
         userRepository.save(user);
@@ -57,9 +60,9 @@ public class DbHouseService
         return mapper.mapToHouseDto(house);
     }
 
-    public boolean join(String inviteCode, String deviceId)
+    public boolean join(String inviteCode, String authHeader)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+        User user = userValidation.validate(authHeader);
 
         if (!repository.existsByPassword(inviteCode)) return false;
 
@@ -68,7 +71,7 @@ public class DbHouseService
             House house = repository.getHouseByPassword(inviteCode);
 
             if (user.getHouse() != null)
-                throw new IllegalStateException("User is already assigned to house!");
+                throw new UserAlreadyAssignedToHouseException("User is already assigned to house!");
 
             user.setHouse(house);
             userRepository.save(user);
@@ -76,17 +79,22 @@ public class DbHouseService
         }
     }
 
-    public void update(String deviceId, HouseDto houseDto)
+    public void update(String authHeader, HouseDto houseDto)
     {
-        User user =userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
-        House house = user.getHouse();
-        house.updateName(mapper.mapToHouse(houseDto));
-        repository.save(house);
+        User user = userValidation.validate(authHeader);
+        if (user.getHouse() == null)
+            throw new UserNotAssignedToHouseException("User Is Not Assigned To House");
+        else
+        {
+            House house = user.getHouse();
+            house.updateName(mapper.mapToHouse(houseDto));
+            repository.save(house);
+        }
     }
 
-    public JsonDoc completeProductsList(String deviceId)
+    public JsonDoc completeProductsList(String authHeader)
     {
-        User caller = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+        User caller = userValidation.validate(authHeader);
 
         if (caller.getHouse() == null)
             throw new UserNotAssignedToHouseException("User Is Not Assigned To House");
@@ -109,9 +117,9 @@ public class DbHouseService
         return res;
     }
     @Transactional
-    public void clearHouse(String deviceId)
+    public void clearHouse(String authHeader)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+        User user = userValidation.validate(authHeader);
 
         if (user.getHouse() == null)
             throw new UserNotAssignedToHouseException("User Is Not Assigned To House");
@@ -122,9 +130,9 @@ public class DbHouseService
     }
 
     @Transactional
-    public void removeUser(String deviceId)
+    public void removeUser(String authHeader)
     {
-        User user = userRepository.getUserByDeviceId(deviceId).orElseThrow(() -> new IdNotFoundException("User with given Device ID not found"));
+        User user = userValidation.validate(authHeader);
         productRepository.deleteAllByUser_Id(user.getId());
 
         House house = user.getHouse();
